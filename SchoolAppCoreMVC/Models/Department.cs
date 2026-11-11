@@ -1,6 +1,4 @@
-﻿using Microsoft.Identity.Client.NativeInterop;
-
-namespace SchoolAppCoreMVC.Models
+﻿namespace SchoolAppCoreMVC.Models
 {
     public class Department
     {

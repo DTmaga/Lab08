@@ -1,0 +1,16 @@
+@model IEnumerable<SchoolAppCoreMVC.Models.Student>
+@{ ViewData["Title"] = "Students"; }
+<h1>Students</h1>
+<p><a asp-action="Create" class="btn btn-primary">Create New</a></p>
+<table class="table">
+	<thead><tr><th>First name</th><th>Last name</th><th>Enrollment date</th><th></th></tr></thead>
+	<tbody>
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td>@item.FirstName</td><td>@item.LastName</td><td>@item.EnrollmentDate.ToShortDateString()</td>
+			<td><a asp-action="Edit" asp-route-id="@item.StudentID">Edit</a> | <a asp-action="Details" asp-route-id="@item.StudentID">Details</a> | <a asp-action="Delete" asp-route-id="@item.StudentID">Delete</a></td>
+		</tr>
+	}
+	</tbody>
+</table>

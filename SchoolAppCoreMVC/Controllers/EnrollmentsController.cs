@@ -16,19 +16,25 @@ public class EnrollmentsController : Controller
     // GET: ENROLLMENTS
     public async Task<IActionResult> Index()    
     {
-        return View(await _context.Enrollments.ToListAsync());
+        return View(await _context.Enrollments
+            .Include(e => e.Course)
+            .Include(e => e.Student)
+            .AsNoTracking()
+            .ToListAsync());
     }
 
     // GET: ENROLLMENTS/Details/5
-    public async Task<IActionResult> Details(int? enrollmentid)
+    public async Task<IActionResult> Details(int? id)
     {
-        if (enrollmentid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
         var enrollment = await _context.Enrollments
-            .FirstOrDefaultAsync(m => m.EnrollmentID == enrollmentid);
+            .Include(e => e.Course)
+            .Include(e => e.Student)
+            .FirstOrDefaultAsync(m => m.EnrollmentID == id);
         if (enrollment == null)
         {
             return NotFound();
@@ -50,7 +56,7 @@ public class EnrollmentsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("EnrollmentID,CourseID,StudentID,Grade,Course,Student")] Enrollment enrollment)
+    public async Task<IActionResult> Create([Bind("CourseID,StudentID,Grade")] Enrollment enrollment)
     {
         if (ModelState.IsValid)
         {
@@ -64,18 +70,20 @@ public class EnrollmentsController : Controller
     }
 
     // GET: ENROLLMENTS/Edit/5
-    public async Task<IActionResult> Edit(int? enrollmentid)
+    public async Task<IActionResult> Edit(int? id)
     {
-        if (enrollmentid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
-        var enrollment = await _context.Enrollments.FindAsync(enrollmentid);
+        var enrollment = await _context.Enrollments.FindAsync(id);
         if (enrollment == null)
         {
             return NotFound();
         }
+        ViewData["CourseID"] = new SelectList(_context.Courses, "CourseID", "Title", enrollment.CourseID);
+        ViewData["StudentID"] = new SelectList(_context.Students, "StudentID", "LastName", enrollment.StudentID);
         return View(enrollment);
     }
 
@@ -84,9 +92,9 @@ public class EnrollmentsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? enrollmentid, [Bind("EnrollmentID,CourseID,StudentID,Grade,Course,Student")] Enrollment enrollment)
+    public async Task<IActionResult> Edit(int? id, [Bind("EnrollmentID,CourseID,StudentID,Grade")] Enrollment enrollment)
     {
-        if (enrollmentid != enrollment.EnrollmentID)
+        if (id != enrollment.EnrollmentID)
         {
             return NotFound();
         }
@@ -111,19 +119,23 @@ public class EnrollmentsController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
+        ViewData["CourseID"] = new SelectList(_context.Courses, "CourseID", "Title", enrollment.CourseID);
+        ViewData["StudentID"] = new SelectList(_context.Students, "StudentID", "LastName", enrollment.StudentID);
         return View(enrollment);
     }
 
     // GET: ENROLLMENTS/Delete/5
-    public async Task<IActionResult> Delete(int? enrollmentid)
+    public async Task<IActionResult> Delete(int? id)
     {
-        if (enrollmentid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
         var enrollment = await _context.Enrollments
-            .FirstOrDefaultAsync(m => m.EnrollmentID == enrollmentid);
+            .Include(e => e.Course)
+            .Include(e => e.Student)
+            .FirstOrDefaultAsync(m => m.EnrollmentID == id);
         if (enrollment == null)
         {
             return NotFound();
@@ -135,9 +147,9 @@ public class EnrollmentsController : Controller
     // POST: ENROLLMENTS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? enrollmentid)
+    public async Task<IActionResult> DeleteConfirmed(int? id)
     {
-        var enrollment = await _context.Enrollments.FindAsync(enrollmentid);
+        var enrollment = await _context.Enrollments.FindAsync(id);
         if (enrollment != null)
         {
             _context.Enrollments.Remove(enrollment);
@@ -147,8 +159,8 @@ public class EnrollmentsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private bool EnrollmentExists(int? enrollmentid)
+    private bool EnrollmentExists(int id)
     {
-        return _context.Enrollments.Any(e => e.EnrollmentID == enrollmentid);
+        return _context.Enrollments.Any(e => e.EnrollmentID == id);
     }
 }

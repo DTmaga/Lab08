@@ -19,15 +19,16 @@ public class DepartmentsController : Controller
     }
 
     // GET: DEPARTMENTS/Details/5
-    public async Task<IActionResult> Details(int? departmentid)
+    public async Task<IActionResult> Details(int? id)
     {
-        if (departmentid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
         var department = await _context.Departments
-            .FirstOrDefaultAsync(m => m.DepartmentID == departmentid);
+            .Include(d => d.Courses)
+            .FirstOrDefaultAsync(m => m.DepartmentID == id);
         if (department == null)
         {
             return NotFound();
@@ -47,7 +48,7 @@ public class DepartmentsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("DepartmentID,DepartmentName,Budget,StartDate,Courses")] Department department)
+    public async Task<IActionResult> Create([Bind("DepartmentName,Budget,StartDate")] Department department)
     {
         if (ModelState.IsValid)
         {
@@ -59,14 +60,14 @@ public class DepartmentsController : Controller
     }
 
     // GET: DEPARTMENTS/Edit/5
-    public async Task<IActionResult> Edit(int? departmentid)
+    public async Task<IActionResult> Edit(int? id)
     {
-        if (departmentid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
-        var department = await _context.Departments.FindAsync(departmentid);
+        var department = await _context.Departments.FindAsync(id);
         if (department == null)
         {
             return NotFound();
@@ -79,9 +80,9 @@ public class DepartmentsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? departmentid, [Bind("DepartmentID,DepartmentName,Budget,StartDate,Courses")] Department department)
+    public async Task<IActionResult> Edit(int? id, [Bind("DepartmentID,DepartmentName,Budget,StartDate")] Department department)
     {
-        if (departmentid != department.DepartmentID)
+        if (id != department.DepartmentID)
         {
             return NotFound();
         }
@@ -110,15 +111,15 @@ public class DepartmentsController : Controller
     }
 
     // GET: DEPARTMENTS/Delete/5
-    public async Task<IActionResult> Delete(int? departmentid)
+    public async Task<IActionResult> Delete(int? id)
     {
-        if (departmentid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
         var department = await _context.Departments
-            .FirstOrDefaultAsync(m => m.DepartmentID == departmentid);
+            .FirstOrDefaultAsync(m => m.DepartmentID == id);
         if (department == null)
         {
             return NotFound();
@@ -130,9 +131,9 @@ public class DepartmentsController : Controller
     // POST: DEPARTMENTS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? departmentid)
+    public async Task<IActionResult> DeleteConfirmed(int? id)
     {
-        var department = await _context.Departments.FindAsync(departmentid);
+        var department = await _context.Departments.FindAsync(id);
         if (department != null)
         {
             _context.Departments.Remove(department);
@@ -142,8 +143,8 @@ public class DepartmentsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private bool DepartmentExists(int? departmentid)
+    private bool DepartmentExists(int id)
     {
-        return _context.Departments.Any(e => e.DepartmentID == departmentid);
+        return _context.Departments.Any(e => e.DepartmentID == id);
     }
 }

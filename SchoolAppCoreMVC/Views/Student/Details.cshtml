@@ -1,0 +1,10 @@
+@model SchoolAppCoreMVC.Models.Student
+@{ ViewData["Title"] = "Student Details"; }
+<h1>Student Details</h1>
+<dl class="row">
+	<dt class="col-sm-3">First name</dt><dd class="col-sm-9">@Model.FirstName</dd>
+	<dt class="col-sm-3">Last name</dt><dd class="col-sm-9">@Model.LastName</dd>
+	<dt class="col-sm-3">Enrollment date</dt><dd class="col-sm-9">@Model.EnrollmentDate.ToShortDateString()</dd>
+	<dt class="col-sm-3">Enrollments</dt><dd class="col-sm-9">@(Model.Enrollments?.Count ?? 0)</dd>
+</dl>
+<a asp-action="Edit" asp-route-id="@Model.StudentID">Edit</a> | <a asp-action="Index">Back to List</a>

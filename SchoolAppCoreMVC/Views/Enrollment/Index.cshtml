@@ -13,10 +13,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CourseID)
+                Course
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudentID)
+                Student
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Grade)
@@ -34,19 +34,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(model => item.CourseID)
+                @(item.Course?.Title ?? "Unknown")
             </td>
             <td>
-                @Html.DisplayFor(model => item.StudentID)
+                @(item.Student is null ? "Unknown" : $"{item.Student.FirstName} {item.Student.LastName}")
             </td>
             <td>
                 @Html.DisplayFor(model => item.Grade)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Course)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.Student)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.EnrollmentID">Edit</a> |

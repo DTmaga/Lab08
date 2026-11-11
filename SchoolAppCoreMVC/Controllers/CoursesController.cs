@@ -16,19 +16,25 @@ public class CoursesController : Controller
     // GET: COURSES
     public async Task<IActionResult> Index()    
     {
-        return View(await _context.Courses.ToListAsync());
+        return View(await _context.Courses
+            .Include(c => c.Department)
+            .Include(c => c.Enrollments)
+            .AsNoTracking()
+            .ToListAsync());
     }
 
     // GET: COURSES/Details/5
-    public async Task<IActionResult> Details(int? courseid)
+    public async Task<IActionResult> Details(int? id)
     {
-        if (courseid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
         var course = await _context.Courses
-            .FirstOrDefaultAsync(m => m.CourseID == courseid);
+            .Include(c => c.Department)
+            .Include(c => c.Enrollments)
+            .FirstOrDefaultAsync(m => m.CourseID == id);
         if (course == null)
         {
             return NotFound();
@@ -49,7 +55,7 @@ public class CoursesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("CourseID,Title,Credits,DepartmentID,Department,Enrollments")] Course course)
+    public async Task<IActionResult> Create([Bind("Title,Credits,DepartmentID")] Course course)
     {
         if (ModelState.IsValid)
         {
@@ -62,18 +68,19 @@ public class CoursesController : Controller
     }
 
     // GET: COURSES/Edit/5
-    public async Task<IActionResult> Edit(int? courseid)
+    public async Task<IActionResult> Edit(int? id)
     {
-        if (courseid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
-        var course = await _context.Courses.FindAsync(courseid);
+        var course = await _context.Courses.FindAsync(id);
         if (course == null)
         {
             return NotFound();
         }
+        ViewData["DepartmentID"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentName", course.DepartmentID);
         return View(course);
     }
 
@@ -82,9 +89,9 @@ public class CoursesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? courseid, [Bind("CourseID,Title,Credits,DepartmentID,Department,Enrollments")] Course course)
+    public async Task<IActionResult> Edit(int? id, [Bind("CourseID,Title,Credits,DepartmentID")] Course course)
     {
-        if (courseid != course.CourseID)
+        if (id != course.CourseID)
         {
             return NotFound();
         }
@@ -109,19 +116,20 @@ public class CoursesController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
+        ViewData["DepartmentID"] = new SelectList(_context.Departments, "DepartmentID", "DepartmentName", course.DepartmentID);
         return View(course);
     }
 
     // GET: COURSES/Delete/5
-    public async Task<IActionResult> Delete(int? courseid)
+    public async Task<IActionResult> Delete(int? id)
     {
-        if (courseid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
         var course = await _context.Courses
-            .FirstOrDefaultAsync(m => m.CourseID == courseid);
+            .FirstOrDefaultAsync(m => m.CourseID == id);
         if (course == null)
         {
             return NotFound();
@@ -133,9 +141,9 @@ public class CoursesController : Controller
     // POST: COURSES/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? courseid)
+    public async Task<IActionResult> DeleteConfirmed(int? id)
     {
-        var course = await _context.Courses.FindAsync(courseid);
+        var course = await _context.Courses.FindAsync(id);
         if (course != null)
         {
             _context.Courses.Remove(course);
@@ -145,8 +153,8 @@ public class CoursesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private bool CourseExists(int? courseid)
+    private bool CourseExists(int id)
     {
-        return _context.Courses.Any(e => e.CourseID == courseid);
+        return _context.Courses.Any(e => e.CourseID == id);
     }
 }
