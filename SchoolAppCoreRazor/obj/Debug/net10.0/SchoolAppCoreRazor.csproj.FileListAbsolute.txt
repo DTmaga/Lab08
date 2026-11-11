@@ -230,3 +230,4 @@ C:\Users\Neind\Documents\VScode\VStudio\lab08\SchoolAppCoreRazor\obj\Debug\net10
 C:\Users\Neind\Documents\VScode\VStudio\lab08\SchoolAppCoreRazor\obj\Debug\net10.0\SchoolAppCoreRazor.pdb
 C:\Users\Neind\Documents\VScode\VStudio\lab08\SchoolAppCoreRazor\obj\Debug\net10.0\SchoolAppCoreRazor.genruntimeconfig.cache
 C:\Users\Neind\Documents\VScode\VStudio\lab08\SchoolAppCoreRazor\obj\Debug\net10.0\ref\SchoolAppCoreRazor.dll
+C:\Users\Neind\Documents\VScode\VStudio\lab08\SchoolAppCoreRazor\obj\Debug\net10.0\SchoolAppCoreRazor.sourcelink.json
